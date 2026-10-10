@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Sprite Sheet</title>
+<style>body{margin:0;background:#2a2234}canvas{image-rendering:pixelated}</style></head>
+<body><canvas id="c"></canvas>
+<script src="js/util.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/tiles.js"></script>
+<script>
+initSprites();
+const c = document.getElementById('c'), g = c.getContext('2d');
+c.width = innerWidth; c.height = 1400;
+g.imageSmoothingEnabled = false;
+const Z = 5;
+let x = 10, y = 10, rowH = 0;
+function put(img) {
+  const w = img.width * Z, h = img.height * Z;
+  if (x + w > c.width - 10) { x = 10; y += rowH + 10; rowH = 0; }
+  g.drawImage(img, x, y, w, h);
+  x += w + 10; rowH = Math.max(rowH, h);
+}
+const sets = ['knight', 'goblin', 'shaman', 'boar', 'slime', 'bat', 'goblinElite'];
+for (const k of sets) for (const s of SPR[k]) put(s.c);
+put(SPR.boss[0].c); put(SPR.bossRage[0].c);
+for (const k in SPR.w) put(SPR.w[k].c);
+for (const k of ['crate', 'barrel', 'xbarrel', 'pot', 'potion', 'chest', 'chestOpen', 'wchest', 'gchest']) put(SPR[k].c);
+for (const th of ['forest', 'ice', 'lava']) {
+  TileGen.setTheme(THEMES[th]);
+  for (let i = 0; i < 12; i++) put(TileGen.floorVariants[i * 2]);
+  put(TileGen.cap(0, 0, 0)); put(TileGen.cap(10, 0, 0)); put(TileGen.front(0, 0)); put(TileGen.frontVariants[4]);
+}
+</script></body></html>
